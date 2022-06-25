@@ -1,6 +1,6 @@
 import style, { Container, Title, TitleBold } from "./styles";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Header } from "../../components/Header";
 
 import { useNavigation } from "@react-navigation/native";
@@ -10,6 +10,7 @@ import { api } from "../../api";
 import { Background } from "../../components/Background";
 import { ButtonCard } from "../../components/ButtonCard";
 import { BUTTON_CARD_HEIGHT } from "../../components/ButtonCard/styles";
+import { Input } from "../../components/Input";
 import { ToastLayout } from "../../components/ToastLayout";
 import { useAuth } from "../../hooks/Auth.hooks";
 import { useMyTheme } from "../../hooks/Theme.hooks";
@@ -32,6 +33,7 @@ export const Listagem: React.FC = () => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [list, setList] = useState<ItensProps[]>([]);
   const [last, setLast] = useState<boolean>(false);
+  const [find, setFind] = useState<string>("");
   const toast = useToast();
   const { theme } = useMyTheme();
 
@@ -119,6 +121,16 @@ export const Listagem: React.FC = () => {
     [active, addCart, setActive]
   );
 
+  const filter = useMemo(
+    () =>
+      !!find
+        ? list.filter((item) => {
+            return item.name.toLowerCase().includes(find.toLowerCase());
+          })
+        : list,
+    [find, list]
+  );
+
   return (
     <Background>
       <Header backFalse>
@@ -127,6 +139,7 @@ export const Listagem: React.FC = () => {
         </Title>
       </Header>
       <Container>
+        <Input placeholder="Pesquisar..." onChangeText={setFind} value={find} />
         <FlatList<ItensProps>
           renderItem={renderItem}
           keyExtractor={(item) => `${item.id}`}
@@ -161,7 +174,7 @@ export const Listagem: React.FC = () => {
             index,
           })}
           numColumns={2}
-          data={list}
+          data={filter}
         />
       </Container>
     </Background>
