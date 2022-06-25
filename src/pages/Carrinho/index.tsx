@@ -10,6 +10,7 @@ import { ToastLayout } from "../../components/ToastLayout";
 import { useAuth } from "../../hooks/Auth.hooks";
 import { CartScreenTabNavigationProps } from "../../routes/TabsNavigation";
 import { ItemCarrinho, useCarrinhoStore } from "../../store/Carrinho";
+import { useHistoricoStore } from "../../store/Historico";
 import {
   ActionColumn,
   Box,
@@ -23,6 +24,8 @@ import {
 export const Carrinho: React.FC = () => {
   const removeItemStorte = useCarrinhoStore((state) => state.removeItem);
   const carrinho = useCarrinhoStore((state) => state.carrinho);
+  const loadData = useHistoricoStore((state) => state.loadData);
+
   const clear = useCarrinhoStore((state) => state.clear);
   const [itemWillDeleted, setItemWillDeleted] = useState<
     ItemCarrinho | undefined
@@ -46,6 +49,7 @@ export const Carrinho: React.FC = () => {
           userEmail: user.email,
           items: carrinho,
         });
+        await loadData(user.id, user.email);
         setload(false);
         clear();
         navigation.navigate("Home");

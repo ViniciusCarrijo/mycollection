@@ -42,26 +42,20 @@ export const Title = styled.Text<TitleProps>`
   text-align: ${(props) => (props.align ? props.align : "left")};
 `;
 interface ItemContainerProps {
-  borderTop?: boolean;
+  par?: boolean;
 }
 export const ItemContainer = styled.View<ItemContainerProps>`
   align-self: stretch;
-  margin: 1px 0;
+  margin: 0px 0px;
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  padding: 5px 0px;
+  padding: 15px 10px;
   ${(props) =>
-    props.borderTop &&
+    props.par &&
     css`
-      border-top-width: 3px;
-      margin-top: 10px;
-      margin-bottom: 20px;
-      padding: 6px 0;
-      justify-content: flex-end;
-      align-items: center;
-      border-top-color: ${(props) =>
-        color(props.theme.colors.background).darken(0.3).hex()};
+      background-color: ${(props) =>
+        color(props.theme.colors.background).darken(0.13).hex()};
     `};
 `;
 interface TextProps {

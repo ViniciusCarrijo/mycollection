@@ -11,9 +11,11 @@ import { Background } from "../../components/Background";
 import { ButtonCard } from "../../components/ButtonCard";
 import { BUTTON_CARD_HEIGHT } from "../../components/ButtonCard/styles";
 import { ToastLayout } from "../../components/ToastLayout";
+import { useAuth } from "../../hooks/Auth.hooks";
 import { useMyTheme } from "../../hooks/Theme.hooks";
 import { TabNavScreenNavigationProp } from "../../routes/PrivateNavigation";
 import { useCarrinhoStore } from "../../store/Carrinho";
+import { useHistoricoStore } from "../../store/Historico";
 
 interface ItensProps {
   id: number;
@@ -32,6 +34,10 @@ export const Listagem: React.FC = () => {
   const [last, setLast] = useState<boolean>(false);
   const toast = useToast();
   const { theme } = useMyTheme();
+
+  const { user } = useAuth();
+  const loadData = useHistoricoStore((state) => state.loadData);
+
   const getData = async (pageNumber = 1) => {
     setPage(pageNumber + 1);
     if (!last || pageNumber === 1) {
@@ -77,8 +83,12 @@ export const Listagem: React.FC = () => {
     await getData(1);
     setRefreshing(false);
   };
+
   useEffect(() => {
     getData(1);
+    if (user) {
+      loadData(user.id, user.email);
+    }
   }, []);
 
   const navigation = useNavigation<TabNavScreenNavigationProp>();

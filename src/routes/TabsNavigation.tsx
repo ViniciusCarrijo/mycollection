@@ -12,12 +12,14 @@ import { Perfil } from "../pages/Perfil";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Badge } from "react-native-paper";
 import { useMyTheme } from "../hooks/Theme.hooks";
+import { Historico } from "../pages/Historico";
 import { useCarrinhoStore } from "../store/Carrinho";
 
 export type TabsNavigationParamList = {
   Home: undefined;
   Cart: undefined;
   Perfil: undefined;
+  Historico: undefined;
 };
 
 export type HomeScreenTabNavigationProps = MaterialBottomTabNavigationProp<
@@ -31,6 +33,10 @@ export type CartScreenTabNavigationProps = MaterialBottomTabNavigationProp<
 export type PerfilScreenTabNavigationProps = MaterialBottomTabNavigationProp<
   TabsNavigationParamList,
   "Perfil"
+>;
+export type HistoricoScreenTabNavigationProps = MaterialBottomTabNavigationProp<
+  TabsNavigationParamList,
+  "Historico"
 >;
 
 const Tab = createMaterialBottomTabNavigator();
@@ -79,6 +85,16 @@ export const TabsNavigation: React.FC = () => {
                 </Badge>
               )}
             </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Historico"
+        component={Historico}
+        options={{
+          tabBarLabel: "Histórico",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="history" color={color} size={26} />
           ),
         }}
       />

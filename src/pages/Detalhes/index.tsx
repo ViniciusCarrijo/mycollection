@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useToast } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import { api } from "../../api";
 import { Background } from "../../components/Background";
@@ -13,6 +13,7 @@ import {
 } from "../../routes/PrivateNavigation";
 import { HomeScreenTabNavigationProps } from "../../routes/TabsNavigation";
 import { useCarrinhoStore } from "../../store/Carrinho";
+import { useHistoricoStore } from "../../store/Historico";
 import { Box, Container, Image, Text, Title } from "./styles";
 
 interface ItensProps {
@@ -31,6 +32,7 @@ export const Detalhes: React.FC = () => {
   const navigation = useNavigation<
     TabNavScreenNavigationProp & HomeScreenTabNavigationProps
   >();
+  const historico = useHistoricoStore((state) => state.historico);
 
   const addItem = useCarrinhoStore((state) => state.addItem);
   const addCart = () => {
@@ -42,6 +44,12 @@ export const Detalhes: React.FC = () => {
       });
     }
   };
+
+  const isMine = useMemo(
+    () =>
+      data ? historico.map((item) => item.jogoId).includes(data.id) : false,
+    [historico, data]
+  );
 
   const addAndGoToCart = () => {
     addCart();
@@ -92,11 +100,15 @@ export const Detalhes: React.FC = () => {
           </Box>
           {data && (
             <>
-              <DefaultButton
-                title={"ADICIONAR AO CARRINHO"}
-                onPress={addCart}
-              />
-              <DefaultButton title={"COMPRAR"} onPress={addAndGoToCart} />
+              {!isMine && (
+                <>
+                  <DefaultButton
+                    title={"ADICIONAR AO CARRINHO"}
+                    onPress={addCart}
+                  />
+                  <DefaultButton title={"COMPRAR"} onPress={addAndGoToCart} />
+                </>
+              )}
             </>
           )}
         </Container>

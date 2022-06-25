@@ -1,9 +1,10 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import {
   LayoutAnimation,
   NativeModules,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useHistoricoStore } from "../../store/Historico";
 import { DefaultButton } from "../DefaultButton";
 import {
   Container,
@@ -12,6 +13,7 @@ import {
   ImageCard,
   ItemTitle,
   ItemTitleBold,
+  Label,
 } from "./styles";
 
 const { UIManager } = NativeModules;
@@ -37,16 +39,24 @@ interface ButtonCardProps {
 
 export const ButtonCard: React.FC<ButtonCardProps> = memo<ButtonCardProps>(
   ({ item, goDetail, addCart, activeId, setActive }) => {
+    const historico = useHistoricoStore((state) => state.historico);
+
     const changeActive = () => {
       LayoutAnimation.linear();
       if (activeId === item.id) setActive();
       else setActive(item.id);
     };
 
+    const isMine = useMemo(
+      () => historico.map((item) => item.jogoId).includes(item.id),
+      [historico]
+    );
+
     return (
       <Container>
         <ContainerButton onPress={changeActive}>
           <ImageCard<any> source={{ uri: item.img }}>
+            {!!isMine && <Label>ADIQUIRIDO</Label>}
             {activeId === item.id && (
               <TouchableWithoutFeedback onPress={changeActive}>
                 <ContainerCard>
@@ -60,10 +70,12 @@ export const ButtonCard: React.FC<ButtonCardProps> = memo<ButtonCardProps>(
                     title={"DETALHES"}
                     onPress={() => goDetail(item.id)}
                   />
-                  <DefaultButton
-                    title={"ADD CART"}
-                    onPress={() => addCart(item as any)}
-                  />
+                  {!isMine && (
+                    <DefaultButton
+                      title={"ADD CART"}
+                      onPress={() => addCart(item as any)}
+                    />
+                  )}
                 </ContainerCard>
               </TouchableWithoutFeedback>
             )}
